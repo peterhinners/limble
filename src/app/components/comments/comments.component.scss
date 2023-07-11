@@ -1,0 +1,166 @@
+// .box {
+//     display: flex;
+//     flex: 0 1 auto;
+//   }
+//   .push {
+//       margin-left: auto;
+//   }
+     
+//  .comment-box {
+//     display: flex;
+//  } 
+
+
+//  .comment-section {
+//     display: flex;
+//  }
+
+
+//  /* important stuff for this example */
+
+
+// .row {
+//     display:flex;
+//   }
+//   .div1 {
+//     flex: 1 1 auto; /* dynamic width */
+//   }
+  
+//   .div2 {
+//     flex: 0 0 auto;  /* fixed width */
+//   }
+  
+  
+  
+//   /* other stuff */
+//   body {
+//     font-family: sans-serif;
+//   }
+//   div {
+//     padding:1em;
+//     margin:0.2em;
+//     background-color: rgba(0,0,0,0.125)
+//   }
+//   .row {
+//     width:80%;
+//     padding:1em;
+//     overflow:hidden;
+//   }
+
+
+
+
+  /* important stuff for this example */
+
+
+.row {
+    display:flex;
+    // justify-content: space-between;
+  }
+  .div1 {
+    flex: 1 1 auto; /* dynamic width */
+  }
+  
+  .div2 {
+    // margin-left: 0 1 auto;
+    flex: 0 0 auto;  /* fixed width */
+    // margin-left: auto !important;
+  }
+  
+  
+  
+  /* other stuff */
+  body {
+    font-family: sans-serif;
+  }
+  div {
+    padding:1em;
+    margin:0.2em;
+    // background-color: rgba(0,0,0,0.125)
+  }
+  .row {
+    width:80%;
+    padding:1em;
+    overflow:hidden;
+    background-color: rgba(0,0,0,0.125)
+
+  }
+
+  .input-with-button {
+    display: flex;
+    width: 100px;
+    // border: 5px solid blue;
+    // margin-bottom: 10px;
+  }
+  
+  .input-with-button input {
+    flex-basis: 100%;
+    min-width: 0;  
+    // min-height: 30px;    
+    // border-radius: 3;                  /*  added  */
+  }
+
+
+
+  .popup {
+    visibility: hidden;
+    opacity: 0;
+  
+    &.open {
+      visibility: inherit;
+      opacity: 1;
+    }
+  
+    display: block;
+  
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  
+    // background: rgba(0, 0, 0, 0.2);
+    transition: opacity 250ms ease-in;
+  
+    > .inside-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  
+      min-height: 30px;
+      width: 300px;
+  
+      background: white;
+      padding: 64px;
+  
+      border-radius: 8px;
+  
+      box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+    button.close {
+      background: none;
+      color: inherit;
+      border: none;
+      font: inherit;
+      cursor: pointer;
+      outline: none;
+  
+      position: absolute;
+      top: 0;
+      left: 0;
+  
+      padding: 16px;
+    }
+  }
+
+
+  .makeBold{
+    font-weight: bold;
+  }
+
+  #editable-content{
+    // height: 2px;
+    width: 80%;
+  }
