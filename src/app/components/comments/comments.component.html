@@ -15,13 +15,13 @@
 </div>
 
 
-<input *ngIf="!showCommentButton" type="text" id="text-input">
+<input *ngIf="!addCommentButton" type="text" id="text-input">
 
 <br>
 <br>
 <br>
 
-<button (click)="addComment()">{{showCommentButton ? "Add Comment" : "Submit Comment"}}</button>
+<button (click)="addComment()">{{addCommentButton ? "Add Comment" : "Submit Comment"}}</button>
 
 <br>
 <br>
@@ -38,22 +38,34 @@
 
 <div class="row">
     <div class="div1 input-with-button">
-        <!-- <input #commentInputRef [hidden]="showCommentButton" [(ngModel)]="newComment" class="comment-input" type="text" id="comment-input" (keypress)="doFilter($event)" (ngModelChange)="doChange($event)"> -->
+        <!-- <input #commentInputRef [hidden]="addCommentButton" [(ngModel)]="newComment" class="comment-input" type="text" id="comment-input" (keypress)="doFilter($event)" (ngModelChange)="doChange($event)"> -->
 
-        <div #editableContent contenteditable (input)="please($event)" id="editable-content"></div>
+        <app-popup *ngIf="popupOpen" [users]="users" [currentInnerHTML]="currentInnerHTML" [currentIndex]="currentIndex" (onUserSelected)="selectUser($event)"></app-popup>
+
+        <div #editableContent contenteditable id="editable-content" onblur="close()"></div>
     </div>
 
-    <div [ngClass]="{'push': showCommentButton}"><button class="div2" (click)="toggleButton()">{{showCommentButton ? "Add Comment" : "Submit Comment"}}</button></div>
+    <div [ngClass]="{'push': addCommentButton}"><button class="div2" (click)="toggleButton()">{{addCommentButton ? "Add Comment" : "Submit Comment"}}</button></div>
 </div>
 
+<br>
+        <br>
+        <br>
+        <br>
+        <br>
 
 
-<ng-container *ngIf="popupOpen">
-<!-- <ng-container *ngIf="display$ | async as display"> -->
+
+<!-- <input type="text" oninput="myFunction($event)"> -->
+        
+
+
+
+
+<!-- <ng-container *ngIf="popupOpen">
+
     <section class="popup" [class.open]="popupOpen"
              (click)="close()">
-    <!-- <section [class.open]="display === 'open'"
-             (click)="close()"> -->
       <div class="inside-popup" (click)="$event.stopPropagation()">
         <button class="close"
                 type="button" 
@@ -61,21 +73,15 @@
         </button>
 
         <div class="row" *ngFor="let user of users">
-        <!-- <div class="row" *ngFor="let user of users | filter:newComment:commentInputRef"> -->
+    
             <div class="div1">{{user.name}}</div>
-            <!-- <div class="div2">{{comment.date | date: 'yyyy/MM/dd h:m a'}}</div> -->
+          
         </div>
   
-        <!-- <select>
-            <option *ngFor="let user of users">
-                {{user.name}}
-            </option>
-            
-        </select> -->
 
       </div>
     </section>
-  </ng-container>
+  </ng-container> -->
 
 
   

@@ -30,25 +30,68 @@ ngAfterViewInit(): void {
   // console.log('thingy , ', thingy);
 }
 
+  // getSearchPhrase(currentInnerHTML: string, currentIndex: number) {
+  //   // currentIndex--;
+
+  //   currentInnerHTML = currentInnerHTML.replace(/&nbsp;/g, ' ');
+
+  //   let character = currentInnerHTML.charAt(currentIndex);
+  //   console.log("filter current index: ", currentIndex);
+  //   console.log("filter character: ", character);
+  //   console.log("filter currentInnerHTML: ", currentInnerHTML);
+
+  //   // var mySubString = currentInnerHTML.substring(
+  //   //   currentIndex + 1, 
+  //   //   currentInnerHTML.lastIndexOf(" ")
+  //   // );
+
+  //   let secondHalf = currentInnerHTML.substring(currentIndex);
+
+  //   return secondHalf.split(" ")[0];
+  // }
+
+  public transform(value: User[], currentInnerHTML: string, currentIndex: number, searchPhrase: string) {
+    
+    // let searchPhrase = this.getSearchPhrase(currentInnerHTML, currentIndex);
+    // console.log("filter searchPhrase: ", searchPhrase);
+
+    return value.filter(user => {
+      return user.name.toLowerCase().indexOf(searchPhrase.toLowerCase()) > -1;
+    });
+
+    // return result;
+
+    // To get the substring BEFORE the nth occurence
+// var tokens2 = currentInnerHTML.split(' ').slice(0, start),
+// result2 = tokens2.join(delimiter); // this
+
+    // let startingIndex = this.getStartingIndex(currentInnerHTML, lastInnerHTML);
+
+    // console.log("startingIndex ", startingIndex);
 
 
-  public transform(value: User[], newComment: string, elem: HTMLInputElement) {
-    console.log("filter value, ", value);
-    console.log("newComment, ", newComment);
-    console.log("elem, ", elem);
-    console.log("elem.value, ", elem.value);
-    let initialPosition;
-    if (elem.selectionStart == null) return value;
+ 
+    
+    return value;
+
+
+
+    // console.log("filter value, ", value);
+    // console.log("newComment, ", newComment);
+    // console.log("elem, ", elem);
+    // console.log("elem.value, ", elem.value);
+    // let initialPosition;
+    // if (elem.selectionStart == null) return value;
 
     // if (elem. == '@') {
     //   initialPosition = elem.selectionStart;
     //   console.log("initialPosition, ", initialPosition);
     // }
 
-    if (initialPosition == null) {
-      console.log("initialPosition is null");
-      return value;
-    }
+    // if (initialPosition == null) {
+    //   console.log("initialPosition is null");
+    //   return value;
+    // }
 
     
 

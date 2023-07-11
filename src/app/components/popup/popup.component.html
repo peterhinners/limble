@@ -1,0 +1,21 @@
+<ng-container>
+
+    <section class="popup" [class.open]="true">
+    <!-- <section class="popup" [class.open]="true"
+             (click)="close()"> -->
+      <div class="inside-popup" (click)="$event.stopPropagation()">
+        <!-- <button class="close"
+                type="button" 
+                (click)="close()">X
+        </button> -->
+
+        <div class="row" *ngFor="let user of users | filter:currentInnerHTML:currentIndex:searchPhrase">
+    
+            <div class="div1" (click)="selectUser(user)">{{user.name}}</div>
+          
+        </div>
+  
+
+      </div>
+    </section>
+  </ng-container>
