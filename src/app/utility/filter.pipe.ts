@@ -50,10 +50,12 @@ ngAfterViewInit(): void {
   //   return secondHalf.split(" ")[0];
   // }
 
-  public transform(value: User[], currentInnerHTML: string, currentIndex: number, searchPhrase: string) {
+  public transform(value: User[], searchPhrase: string) {
     
     // let searchPhrase = this.getSearchPhrase(currentInnerHTML, currentIndex);
-    // console.log("filter searchPhrase: ", searchPhrase);
+    console.log("filter value: ", value);
+    console.log("filter searchPhrase: ", searchPhrase);
+   
 
     return value.filter(user => {
       return user.name.toLowerCase().indexOf(searchPhrase.toLowerCase()) > -1;

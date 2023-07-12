@@ -9,7 +9,7 @@
                 (click)="close()">X
         </button> -->
 
-        <div class="row" *ngFor="let user of users | filter:currentInnerHTML:currentIndex:searchPhrase">
+        <div class="row" *ngFor="let user of users | filter:searchPhrase">
     
             <div class="div1" (click)="selectUser(user)">{{user.name}}</div>
           

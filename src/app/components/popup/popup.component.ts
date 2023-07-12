@@ -48,12 +48,19 @@ export class PopupComponent implements OnInit {
   getSearchPhrase(currentInnerHTML: string, currentIndex: number) {
     // currentIndex--;
 
+    console.log("filter currentInnerHTML1: ", currentInnerHTML);
+
     currentInnerHTML = currentInnerHTML.replace(/&nbsp;/g, ' ');
+
+    // if (currentInnerHTML.endsWith('&nbsp;')) {
+    //   // currentInnerHTML = currentInnerHTML.replace(/&nbsp;/g, ' ');
+    //   currentInnerHTML = currentInnerHTML.slice(0, '&nbsp;'.length);
+    // }
 
     let character = currentInnerHTML.charAt(currentIndex);
     console.log("filter current index: ", currentIndex);
     console.log("filter character: ", character);
-    console.log("filter currentInnerHTML: ", currentInnerHTML);
+    console.log("filter currentInnerHTML2: ", currentInnerHTML);
 
     // var mySubString = currentInnerHTML.substring(
     //   currentIndex + 1, 
@@ -62,11 +69,33 @@ export class PopupComponent implements OnInit {
 
     let secondHalf = currentInnerHTML.substring(currentIndex);
 
-    return secondHalf.split(" ")[0];
+    console.log("filter secondHalf: ", secondHalf);
+
+    let result = secondHalf.split(" ")[0];
+
+    // if (result.startsWith('\u0001')) result = '';
+
+    return this.cleanString(secondHalf.split(" ")[0]);
+  }
+
+  cleanString(input: string) {
+    var output = "";
+    for (var i=0; i<input.length; i++) {
+
+      if ((input.charCodeAt(i) > 64 && input.charCodeAt(i) < 91) || (input.charCodeAt(i) > 96 && input.charCodeAt(i) < 123) || input.charCodeAt(i) == 8) {
+        output += input.charAt(i);
+      }
+
+        // if (input.charCodeAt(i) <= 127) {
+        //     output += input.charAt(i);
+        // }
+    }
+    return output;
   }
 
   selectUser(user: User) {
     console.log("selected user: ", user);
+    console.log("this.searchPhrase: ", this.searchPhrase);
     this.onUserSelected.emit({user: user, searchPhrase: this.searchPhrase});
   }
 

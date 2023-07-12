@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms'; 
+
 
 import { AppComponent } from './app.component';
 import { CommentsComponent } from './components/comments/comments.component';
@@ -15,7 +15,7 @@ import { PopupComponent } from './components/popup/popup.component';
     PopupComponent
   ],
   imports: [
-    BrowserModule, FormsModule
+    BrowserModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Comment } from 'src/app/models/comment';
 import { User } from '../models/user';
+import { Tag } from '../models/tag';
 
 
 
@@ -39,21 +40,9 @@ export class CommentData {
     return 99;
   }
 
-//   private display: BehaviorSubject<'open' | 'close'> = 
-//                    new BehaviorSubject('close');
-//   private display: any = new BehaviorSubject('close');
-
-//   watch(): Observable<'open' | 'close'> {
-//     return this.display.asObservable();
-//   }
-
-//   open() {
-//     this.display.next('open');
-//   }
-
-//   close() {
-//     this.display.next('close');
-//   }
-
+  alertTaggedUsers(tags: Tag[]) {
+    // make some api call here with the tag info and relevant commentId
+    console.log("tag data to alert users with: ", tags);
+  }
 
 }

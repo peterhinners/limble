@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component, ViewEncapsulation, Inject, OnDestroy, OnI
 import { Observable, Subscription } from 'rxjs';
 import { Comment } from 'src/app/models/comment';
 import { User } from 'src/app/models/user';
+import { Tag } from 'src/app/models/tag';
 import { CommentData } from 'src/app/services/comment-data';
 import {DomSanitizer} from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common'; 
-
-
+import { forEachChild } from 'typescript';
 
 @Component({
   selector: 'app-comments',
@@ -19,22 +19,19 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
   comments!: Comment[];
   users!: User[];
   subscriptions: Subscription[] = [];
-  addCommentButton: boolean = true;
-  newComment: string = "";
-  lastFakeCommentId: number = 5;
-  
-
+  showSubmitButton: boolean = false;
+  lastFakeCommentId: number = 5; // for demo purposes
   popupOpen: boolean = false;
   lastInnerHTML: string = '';
   currentInnerHTML: string = '';
   currentIndex!: number;
-  
+  tagId: number = 0;
 
   private unlistener!: () => void;
 
-  @ViewChild('editableContent') editableContent?: ElementRef;
+  @ViewChild('editableContent') editableContent!: ElementRef;
 
-  constructor(private commentDataService: CommentData, private renderer: Renderer2, @Inject(DOCUMENT) private document: Document, private ref: ChangeDetectorRef) {}
+  constructor(private commentDataService: CommentData, private renderer: Renderer2, @Inject(DOCUMENT) private document: Document) {}
 
   ngOnInit(): void {
 
@@ -55,18 +52,44 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-
-
-      // let hmmm = this.getPreviousSiblings(this.editableContent?.nativeElement, 'shoe');
-      // console.log("hmm ", hmmm);
-    
-     this.unlistener = this.renderer.listen(this.editableContent?.nativeElement, "input", event => {
+  
+     this.unlistener = this.renderer.listen(this.editableContent.nativeElement, "input", event => {
      
       console.log("event: ", event);
       console.log("event.target.innerHTML: ", event.target.innerHTML);
+      console.log("event.target.innerText: ", event.target.innerText);
+      console.log("this.editableContent.nativeElement: ", this.editableContent.nativeElement);
+
+      if (event.inputType == "deleteContentBackward") {
+        console.log("DELETING!!!");
+
+        const target = this.document.createTextNode("\u0001");
+        this.document.getSelection()?.getRangeAt(0).insertNode(target);
+        this.currentIndex = event.target.innerHTML.indexOf("\u0001");
+        target.parentNode?.removeChild(target);
+
+        console.log("DELETING!!! this.currentIndex: ", this.currentIndex);
+        
+        this.handleDelete(event.target.innerHTML);
+
+      }
+
+      if (navigator.userAgent.includes("Firefox") && event.target.innerHTML.endsWith("<br>")) {
+        console.log("weeeeeeeeee3");
+        // handle known firefox <br> bug, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1615852
+        this.currentInnerHTML = event.target.innerHTML.slice(0, -4);
+      } else {
+        this.currentInnerHTML = event.target.innerHTML;
+      }
       
 
-      this.currentInnerHTML = event.target.innerHTML;
+      
+
+      console.log("currentblah ", this.currentInnerHTML);
+
+      // if (navigator.userAgent.includes("Firefox")) {
+      //   currentInnerHTML = currentInnerHTML.replace(/&nbsp;/g, ' ');
+      // }
 
       
 
@@ -79,10 +102,11 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
         // console.log("last html ", this.lastInnerHTML);
         // console.log("current html ", event.target.innerHTML);
 
-        const target = document.createTextNode("\u0001");
+        // this.currentIndex = this.getCursorIndex(event.target.innerHTML);
+
+      const target = this.document.createTextNode("\u0001");
       this.document?.getSelection()?.getRangeAt(0).insertNode(target);
       this.currentIndex = event.target.innerHTML.indexOf("\u0001");
-      // var position = contentEditableDiv.innerHTML.indexOf("\u0001");
       target.parentNode?.removeChild(target);
 
         // let difference = patienceDiff( a.split(""), b.split("") );
@@ -94,33 +118,74 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.close();
       }
 
-
-
-
       console.log("comments this.lastInnerHTML: ", this.lastInnerHTML);
       console.log("comments this.currentInnerHTML: ", this.currentInnerHTML);
 
-  
-      if (event.data === "!") {
-        // this.editableContent.nativeElement.innerHTML = '<span class="testingSpan">foobar</span> another';
-  
-        // myrenderer.setElementAttribute(elementRef.nativeElement, 'attributename', 'attributevalue');
-  
-        // let el = this.elRef.nativeElement;
-      // this.renderer.setAttribute(this.editableContent.nativeElement, 'innerHTML', 
-      //    `<span class="testingSpan">${this.editableContent.nativeElement.innerHTML}</span>`);
-  
-      // this.renderer.addClass(this.editableContent.nativeElement, 'makeBold');
-      this.renderer.setProperty(this.editableContent?.nativeElement, 'innerHTML', 'Hello <span class="makeBold" data-paged-user="user-id-paged">@Surya</span> again');
-
-
-      }
-
     });
 
-    // this.listenForPlotChanges();
-    // this.editableContent?.nativeElement.querySelector('editable-content')
-    //                             .addEventListener('click', this.onClick.bind(this));
+  }
+
+  handleDelete(innerHTML: string) {
+    let before = innerHTML.substring(0, this.currentIndex);
+        let after = innerHTML.substring(this.currentIndex);
+
+        if (after.startsWith("</span>")) {
+          console.log("starts with closing span");
+          let dataTagId = '';
+
+          // data-tag-id=
+          let goal = '';
+
+          for (let len = before.length, i = len - 1; i > -1; i--) {
+            console.log("before ", before[i]);
+            goal = before[i] + goal;
+
+            if (goal.startsWith("data-tag-id")) break;
+          }
+
+          if (goal.startsWith("data-tag-id")) {
+
+            let hunch2 = goal.substring('data-tag-id="'.length);
+            
+
+            for (var i = 0; i < hunch2.length; i++) {
+
+              if (hunch2.charAt(i) >= '0' && hunch2.charAt(i) <= '9') {
+                dataTagId += hunch2.charAt(i);
+              } else {
+                break;
+              }
+              // alert(hunch2.charAt(i));
+            }
+
+            let hmm = hunch2[0];
+            // console.log("hunch1: ", hunch1);
+            console.log("dataTagId: ", dataTagId);
+            console.log("hunch2: ", hunch2);
+
+          }
+
+          console.log("goal: ", goal);
+         
+
+
+          let nodeToRemove = this.editableContent.nativeElement.querySelectorAll('[data-tag-id="' + dataTagId + '"]')[0];
+
+          console.log("nodeToRemove: ", nodeToRemove);
+
+          // const myNode = this.document.getElementById("editable-content");
+          
+          this.editableContent.nativeElement.removeChild(nodeToRemove);
+          
+        }
+
+        console.log("before: ", before);
+        console.log("after: ", after);
+        
+
+        let another = this.editableContent.nativeElement.closest('span');
+        console.log("another: ", another);
+        // value.substring(0, index) + "," + value.substring(index);
   }
 
   
@@ -137,21 +202,111 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   selectUser(event: any) {
     this.close();
+    this.tagId++;
     console.log("comments $event: ", event);
+    console.log("comments event.searchPhrase: ", event.searchPhrase);
     console.log("comments this.currentIndex: ", this.currentIndex);
+    
     console.log("comments this.currentInnerHTML: ", this.currentInnerHTML);
+
+    let thingy1 = this.currentInnerHTML.substring(0, this.currentIndex - 1);
+    let thingy2 = this.currentInnerHTML.substring(this.currentIndex);
+    
+
+    thingy2 = thingy2.substring(event.searchPhrase.length);
+
+    console.log("thingy1: ", thingy1);
+    console.log("thingy2: ", thingy2);
 
     let innerHtmlParts = this.currentInnerHTML.split("@" + event.searchPhrase);
 
-    this.currentInnerHTML = innerHtmlParts[0] + 
-    '<span class="makeBold" data-selected-user-id="' + event.user.userID + '" data-comment-id="' + this.lastFakeCommentId + '">' + '@' + event.user.name + '</span>' + innerHtmlParts[1];
+    // console.log("innerHtmlParts: ", innerHtmlParts);
+    // console.log("innerHtmlParts[0]: ", innerHtmlParts[0]);
+    // \u0001
 
-    this.renderer.setProperty(this.editableContent?.nativeElement, 'innerHTML', this.currentInnerHTML);
+    if (!thingy2) thingy2 = '\u0001';
 
-      // "user-id-paged">@Surya</span>' +
-      // "@" + 
-      // event.user.name + 
-      // innerHtmlParts[1]
+    this.currentInnerHTML = thingy1 + 
+    '<span class="make-bold no-user-select" data-recipient-user-id="' + event.user.userID + '" data-tag-id="' + this.tagId +  '">' + '@' + event.user.name + '</span>' + thingy2;
+
+    // this.currentInnerHTML = innerHtmlParts[0] + 
+    // '<span class="make-bold" data-tag-id="' + this.tagId +  '" data-recipient-user-id="' + event.user.userID + '" data-comment-id="' + this.lastFakeCommentId + '">' + '@' + event.user.name + '</span>' + innerHtmlParts[1];
+
+    this.renderer.setProperty(this.editableContent.nativeElement, 'innerHTML', this.currentInnerHTML);
+
+  
+    // const newNode = this.document.querySelectorAll('[data-tag-id="' + this.tagId + '"]')[0];
+    const newNode = this.editableContent.nativeElement.querySelectorAll('[data-tag-id="' + this.tagId + '"]')[0];
+
+    const nodeList = this.editableContent.nativeElement.children;
+
+    console.log("newNode------------- : ", newNode);
+    console.log("nodeList------------- : ", nodeList);
+
+    let childNodes = this.editableContent.nativeElement.childNodes;
+    console.log("childNodes------------- : ", childNodes);
+
+    let numberOfPriorNodes = 0;
+    // Since childNodes are zero-indexed, the newNode's index also happens to be the number of prior nodes
+    for (let i = 0; i < childNodes.length; i++) {
+      if (childNodes[i] == newNode) numberOfPriorNodes = i;
+    }
+
+    console.log("numberOfPriorNodes------------- : ", numberOfPriorNodes);
+
+   
+
+    
+   const el = document.getElementById("editable-content");
+    const range = document.createRange();
+    const sel = window.getSelection();
+    // Works! but keeps old class
+    if (el) {
+
+      // let okThen = el.findIndex(elem => elem.id == idToSearch)
+      console.log("el.childNodes: ", el.childNodes);
+      // const newDiv = document.createElement("span");
+      // range.insertNode((suffixNode = this.document.createTextNode(' ')));
+      // range.setStartAfter(el.childNodes[numberOfPriorNodes]);
+
+
+      range.setStartAfter(el.childNodes[numberOfPriorNodes]);
+      // range.setStart(el.childNodes[1], 1);
+    range.collapse(true);
+    
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+    }
+
+    // works!, kind of
+
+    // var el = document.getElementById("editable-content");
+    // var range = document.createRange();
+    // var sel = window.getSelection();
+    // // Works! but keeps old class
+    // if (el) {
+    //   console.log("el.childNodes: ", el.childNodes);
+    //   range.setStart(el.childNodes[1], 1);
+    // range.collapse(true);
+    
+    // sel?.removeAllRanges();
+    // sel?.addRange(range);
+    // }
+    
+    
+
+  //   let el: any = this.document.getElementById('editable-content')
+
+  //   el?.focus();
+  // let range = document.createRange()
+  //   , sel   = window.getSelection()
+  //   ;
+
+  //   console.log("sel:: ", sel)
+  // range.setStart(el?.firstChild, 2)
+  // range.setEnd(el.firstChild, 2)
+  // sel?.removeAllRanges()
+  // sel?.addRange(range)
     
 
 
@@ -160,78 +315,61 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  toggleButton() {
+  toggleSubmitButton() {
+    if (this.showSubmitButton && this.editableContent.nativeElement.innerText) {
+      this.submitComment();
+    } else {
+      this.showSubmitButton = true;
+      this.editableContent.nativeElement.focus();
+    }
+  }
 
-    this.editableContent?.nativeElement.focus();
-    
+  submitComment() {
+  
     console.log("this.editableContent, ", this.editableContent);
     console.log("this.editableContent?.nativeElement.innerHTML, ", this.editableContent?.nativeElement.innerHTML);
     console.log("this.editableContent.nativeElement?.innerText, ", this.editableContent?.nativeElement.innerText);
+    
+    this.lastFakeCommentId++;
 
-    if (this.addCommentButton === false && this.newComment) {
-      this.lastFakeCommentId++;
+    let finalHtml = this.editableContent.nativeElement.innerHTML;
 
+    finalHtml = finalHtml.replace(/\u0001/g, '');
 
-      let html = "<p><strong>This is in bold.</strong> This is not.</p>";
+    console.log("finalHtml: ", finalHtml);
 
-      // transform(html) {
-      //   return this.sanitizer.bypassSecurityTrustHtml(html);
-      // }
+    const childNodes = this.editableContent.nativeElement.childNodes;
 
-      // let thingy2 = this.sanitizer.bypassSecurityTrustHtml(html);
+    let tags: Tag[] = [];
 
-      // console.log("thingy2 , ", thingy2);
+    for (let i = 0; i < childNodes.length; i++) {
 
+      if (childNodes[i].className && childNodes[i].className.indexOf("make-bold") > -1) {
 
-      this.comments.push({ id: this.lastFakeCommentId, userID: this.commentDataService.getCurrentUserId(), text: "<p><strong>This is in bold.</strong> This is not.</p>", date: new Date() });
-      
-      // this.comments.push({ id: this.lastFakeCommentId, userID: this.commentDataService.getCurrentUserId(), text: this.newComment, date: new Date() });
+        const tag: Tag = {id: parseInt(childNodes[i].getAttribute('data-tag-id')), recipientUserId: parseInt(childNodes[i].getAttribute('data-recipient-user-id')), senderUserId: this.commentDataService.getCurrentUserId()};
+
+        tags.push(tag);
+      }
     }
 
-    this.newComment = '';
-    this.addCommentButton = !this.addCommentButton;
+    // persist to backend in real life, but here just pushing to comments
+    this.comments.push({ id: this.lastFakeCommentId, userID: this.commentDataService.getCurrentUserId(), text: finalHtml, date: new Date() });
+
+    // alert the tagged users, this could possibly be combined with the comment persisting
+    this.commentDataService.alertTaggedUsers(tags)
+      
+    this.clearContentEditable();
   }
 
+  clearContentEditable() {
+    this.showSubmitButton = false;
+    this.renderer.setProperty(this.editableContent.nativeElement, 'innerHTML', '');
+    // this.renderer.setProperty(this.editableContent?.nativeElement, 'innerHTML', '');
+    console.log("clearContentEditable this.editableContent, ", this.editableContent);
+    console.log("clearContentEditable this.editableContent?.nativeElement.innerHTML, ", this.editableContent?.nativeElement.innerHTML);
+    console.log("clearContentEditable this.editableContent.nativeElement?.innerText, ", this.editableContent?.nativeElement.innerText);
 
-  getSelectedText() {
-
-    if (this.document.getSelection) { 
-      console.log("1")   // all browsers, except IE before version 9
-        let sel = this.document.getSelection();
-        console.log("sel ", sel);
-        console.log("sel.anchorNode ", sel?.anchorNode);
-        console.log("sel.anchorNode.parentNode.childNodes ", sel?.anchorNode?.parentNode?.childNodes);
-        console.log("sel.anchorNode.parentNode.childNodes ", sel?.anchorNode?.parentNode?.replaceChild);
-
-        let parentNode = sel?.anchorNode?.parentNode;
-
-        // SAVE!!! to replace nodes, maybe
-        // let childNodes = sel?.anchorNode?.parentNode?.childNodes;
-
-        // if (sel && sel.anchorNode && sel.anchorNode.parentNode && sel.anchorNode.parentNode.childNodes && sel.anchorNode.parentNode.childNodes.length) {
-
-        //   let a = sel.anchorNode.parentNode.childNodes[1];
-        //   let h = document.createElement('span')
-        //   h.appendChild(document.createTextNode('new text'))
-        //   parentNode?.replaceChild(h, a);
-        // }
-
-        
-        // console.log("sel.anchorNode ", sel.anchorNode);
-
-            // sel is a string in Firefox and Opera, 
-            // and a selectionRange object in Google Chrome, Safari and IE from version 9
-            // the alert method displays the result of the toString method of the passed object
-        // alert(sel);
-    } 
-    else {
-      console.log("2") 
-        // if (this.document.selection) {   // Internet Explorer before version 9
-        //     var textRange = this.document.selection.createRange();
-        //     alert(textRange.text);
-        // }
-    }
-}
+  }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());

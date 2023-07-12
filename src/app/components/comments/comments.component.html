@@ -42,17 +42,13 @@
 
         <app-popup *ngIf="popupOpen" [users]="users" [currentInnerHTML]="currentInnerHTML" [currentIndex]="currentIndex" (onUserSelected)="selectUser($event)"></app-popup>
 
-        <div #editableContent contenteditable id="editable-content" onblur="close()"></div>
+        <div [ngClass]="{'disable-content-editable': !showSubmitButton}" #editableContent contenteditable id="editable-content"></div>
     </div>
 
-    <div [ngClass]="{'push': addCommentButton}"><button class="div2" (click)="toggleButton()">{{addCommentButton ? "Add Comment" : "Submit Comment"}}</button></div>
+    <div [ngClass]="{'push': !showSubmitButton}"><button class="div2" (click)="toggleSubmitButton()">{{showSubmitButton ? "Submit Comment" : "Add Comment"}}</button></div>
 </div>
 
-<br>
-        <br>
-        <br>
-        <br>
-        <br>
+
 
 
 
@@ -85,17 +81,5 @@
 
 
   
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+
 <div>goodbye</div>
