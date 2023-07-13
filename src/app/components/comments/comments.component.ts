@@ -54,6 +54,13 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    // TODO offset the below functionality to a dedicated popup service (I started doing this
+    // but realized it would take longer than the 2 day exercise limit)
+    this.setInputListener();
+    this.setKeydownListener();
+  }
+
+  setInputListener(): void {
     // Listen for input events on the editablecontent area
     this.inputListener = this.renderer.listen(this.editableContent.nativeElement, "input", event => {
 
@@ -99,9 +106,10 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
       if (event.data === " ") {
         this.close();
       }
-
     });
+  }
 
+  setKeydownListener(): void {
     // Disable default up and down arrow behavior if editableContent is open, 
     // to allow up and down arrows to inform the tag selection
     this.keydownListener = this.renderer.listen(this.editableContent.nativeElement, "keydown", e => {
@@ -117,10 +125,9 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
       return true;
     });
-
   }
 
-  handleDelete(innerHTML: string) {
+  handleDelete(innerHTML: string): void {
     const beforeIndex = innerHTML.substring(0, this.currentIndex);
     const afterIndex = innerHTML.substring(this.currentIndex);
 
@@ -160,16 +167,16 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  open() {
+  open(): void {
     this.popupOpen = true;
   }
 
-  close() {
+  close(): void {
     this.popupOpen = false;
     this.lastAtSignIndex = -1;
   }
 
-  selectUser(event: SelectedUser) {
+  selectUser(event: SelectedUser): void {
     this.close();
     this.tagId++;
     
@@ -209,7 +216,7 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  toggleSubmitButton() {
+  toggleSubmitButton(): void {
     if (this.showSubmitButton && this.editableContent.nativeElement.innerText) {
       this.submitComment();
     } else {
@@ -218,7 +225,7 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  submitComment() {
+  submitComment(): void {
     this.lastFakeCommentId++; // In lieu of actually persisting, for demo purposes
 
     let finalHtml = this.editableContent.nativeElement.innerHTML;
@@ -251,7 +258,7 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.clearContentEditable();
   }
 
-  clearContentEditable() {
+  clearContentEditable(): void {
     this.showSubmitButton = false;
     this.renderer.setProperty(this.editableContent.nativeElement, 'innerHTML', '');
   }
