@@ -1,12 +1,11 @@
-import { ChangeDetectorRef, Component, ViewEncapsulation, Inject, OnDestroy, OnInit, Renderer2, ViewChild, AfterViewInit, ElementRef, HostListener } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Component, ViewEncapsulation, Inject, OnDestroy, OnInit, Renderer2, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Comment } from 'src/app/models/comment';
 import { User } from 'src/app/models/user';
 import { Tag } from 'src/app/models/tag';
 import { CommentData } from 'src/app/services/comment-data';
-import {DomSanitizer} from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common'; 
-import { forEachChild } from 'typescript';
+import { SelectedUser } from 'src/app/models/selected-user';
 
 @Component({
   selector: 'app-comments',
@@ -161,7 +160,6 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  
   open() {
     this.popupOpen = true;
   }
@@ -171,13 +169,13 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.lastAtSignIndex = -1;
   }
 
-  selectUser(event: any) {
+  selectUser(event: SelectedUser) {
     this.close();
     this.tagId++;
     
     const htmlBeforeIndex = this.currentInnerHTML.substring(0, this.currentIndex - 1);
     let htmlAfterIndex = this.currentInnerHTML.substring(this.currentIndex);
-    // remove the searchPhrase letters, as they will be replaced by the bolded user tag
+    // remove the typed-in searchPhrase letters, as they will be replaced by the bolded user tag
     htmlAfterIndex = htmlAfterIndex.substring(event.searchPhrase.length);
 
     // Create the new inner HTML, and add a placeholder non-visible character (unicode) at the end

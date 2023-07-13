@@ -1,18 +1,20 @@
 <div class="container">
-    <p style="color: #212427; font-family: sans-serif; font-weight: 600;">Comments:</p>
+    <p class="comments-style">Comments:</p>
 
     <div class="row" *ngFor="let comment of comments">
-        <div style="color: #212427; font-family: sans-serif;" class="left-elements" [innerHTML]="comment.text"></div>
-        <div style="color: #212427; font-family: sans-serif;" class="right-elements">{{comment.date | date: 'yyyy/MM/dd h:m a'}}</div>
+        <div class="left-elements" [innerHTML]="comment.text"></div>
+        <div class="right-elements">{{comment.date | date: 'yyyy/MM/dd hh:mm a'}}</div>
     </div>
 
     <div class="row special">
         <div class="left-elements input-with-button">
 
             <div class="wrapper">
-                <div style="margin-top: 2px; vertical-align: middle; color: #212427; font-family: sans-serif;" [ngClass]="{'disable-content-editable': !showSubmitButton}" #editableContent contenteditable id="editable-content"></div>
+                <!-- Comment area, using contenteditable intead of input -->
+                <div [ngClass]="{'disable-content-editable': !showSubmitButton}" #editableContent contenteditable id="editable-content"></div>
 
-                <app-popup style="vertical-align: middle; color: #212427; font-family: sans-serif;" id="tag-popup" *ngIf="popupOpen" [users]="users" [currentInnerHTML]="currentInnerHTML" [currentIndex]="currentIndex" (onUserSelected)="selectUser($event)" (closePopup)="close()"></app-popup>
+                <!-- User Tag Popup -->
+                <app-popup id="tag-popup" *ngIf="popupOpen" [users]="users" [currentInnerHTML]="currentInnerHTML" [currentIndex]="currentIndex" (onUserSelected)="selectUser($event)" (closePopup)="close()"></app-popup>
             </div>
 
         </div>

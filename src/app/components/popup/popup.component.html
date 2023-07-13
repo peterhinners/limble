@@ -1,23 +1,19 @@
 <div class="popup-wrapper" #popupArea>
-  <div class="inside-popup" (click)="$event.stopPropagation()">
 
     <div class="tag-row" [ngClass]="{'make-blue': i == highlightedUserIndex}" [attr.id]="user.userID" *ngFor="let user of users | filter:searchPhrase:filterMetaData; let i = index">
 
         <div (click)="selectUser(user)">
-          <img style="width: 25px; height: 25px; vertical-align: middle;
-          margin-top: -3px;" [src]="user.avatar">
-          <span [ngClass]="i == highlightedUserIndex ? 'make-white' : 'make-dark'" style="vertical-align: middle; padding-left: 10px; font-family: sans-serif;">{{user.firstName + " " + user.lastName}}</span> 
-          <img style="width: 10px; height: 10px; padding-left: 10px; vertical-align: middle;
-          margin-top: -3px;" [src]="user.status === 'here' ? '/assets/greenstatus.png' : '/assets/whitestatus.png'">
+          <img class="avatar" [src]="user.avatar">
+          <span class="name-area" [ngClass]="i == highlightedUserIndex ? 'make-white' : 'make-dark'">{{user.firstName + " " + user.lastName}}</span> 
+          <img class="status" [src]="user.status === 'here' ? '/assets/greenstatus.png' : '/assets/whitestatus.png'">
         </div>
 
     </div>
 
-    <div class="tag-row make-dark" style="text-align: center;" *ngIf="!filterMetaData.filteredUsers.length">
+    <div class="tag-row make-dark" *ngIf="!filterMetaData.filteredUsers.length">
       No users found matching that entry
     </div>
 
-  </div>
 </div>
 
 
