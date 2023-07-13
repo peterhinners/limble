@@ -54,8 +54,8 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // TODO offset the below functionality to a dedicated popup service (I started doing this
-    // but realized it would take longer than the 2 day exercise limit)
+    // TODO: Move most of this component's functionality to a dedicated popup service
+    // (I started doing this but realized it would take longer than the 2 day exercise limit)
     this.setInputListener();
     this.setKeydownListener();
   }
