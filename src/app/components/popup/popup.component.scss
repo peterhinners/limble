@@ -50,6 +50,9 @@
     // border-bottom: 1px solid #808589;
     margin-bottom:5px;
   }
+  .tag-row:hover {
+    cursor: pointer;
+}
   .tag-left-elements {
     flex: 1 1 auto;/* dynamic width */
   }
