@@ -27,11 +27,13 @@ export class CommentData {
   getUsers(): Observable<User[]> {
     // Simulate returning user data from a users endpoint
     return of([
-        {userID: 1, name: 'Kevin'},
-        {userID: 2, name: 'Jeff'},
-        {userID: 3, name: 'Bryan'},
-        {userID: 4, name: 'Gabbey'},
-        {userID: 5, name: 'Brad'},
+        {userID: 1, firstName: 'Bill', lastName: 'Murray', avatar: '/assets/billmurray.png', status: 'here'},
+        {userID: 2, firstName: 'Kevin', lastName: 'Costner', avatar: '/assets/kevincostner.png', status: 'away'},
+        {userID: 3, firstName: 'Winona', lastName: 'Ryder', avatar: '/assets/winona.png', status: 'away'},
+        {userID: 4, firstName: 'Chevy', lastName: 'Chase', avatar: '/assets/chevychase.png', status: 'here'},
+        {userID: 5, firstName: 'Bill', lastName: 'Gates', avatar: '/assets/missingimage.png', status: 'here'},
+        {userID: 6, firstName: 'Michael', lastName: 'Jordan', avatar: '/assets/michaeljordan.png', status: 'here'},
+        {userID: 7, firstName: 'Babe', lastName: 'Ruth', avatar: '/assets/baberuth.png', status: 'away'}
     ]);
   }
 

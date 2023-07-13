@@ -1,21 +1,26 @@
-<ng-container>
+<div class="popup-wrapper" #popupArea>
+  <div class="inside-popup" (click)="$event.stopPropagation()">
 
-    <section class="popup" [class.open]="true">
-    <!-- <section class="popup" [class.open]="true"
-             (click)="close()"> -->
-      <div class="inside-popup" (click)="$event.stopPropagation()">
-        <!-- <button class="close"
-                type="button" 
-                (click)="close()">X
-        </button> -->
+    <div class="tag-row" [ngClass]="{'make-blue': i == highlightedUserIndex}" [attr.id]="user.userID" *ngFor="let user of users | filter:searchPhrase:filterMetaData; let i = index">
 
-        <div class="row" *ngFor="let user of users | filter:searchPhrase">
-    
-            <div class="div1" (click)="selectUser(user)">{{user.name}}</div>
-          
+        <div (click)="selectUser(user)">
+          <img style="width: 25px; height: 25px; vertical-align: middle;
+          margin-top: -3px;" [src]="user.avatar">
+          <span [ngClass]="i == highlightedUserIndex ? 'make-white' : 'make-dark'" style="vertical-align: middle; padding-left: 10px; font-family: sans-serif;">{{user.firstName + " " + user.lastName}}</span> 
+          <img style="width: 10px; height: 10px; padding-left: 10px; vertical-align: middle;
+          margin-top: -3px;" [src]="user.status === 'here' ? '/assets/greenstatus.png' : '/assets/whitestatus.png'">
         </div>
-  
 
-      </div>
-    </section>
-  </ng-container>
+    </div>
+
+    <div class="tag-row make-dark" style="text-align: center;" *ngIf="!filterMetaData.filteredUsers.length">
+      No users found matching that entry
+    </div>
+
+  </div>
+</div>
+
+
+
+
+

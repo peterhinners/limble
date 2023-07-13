@@ -26,8 +26,10 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
   currentInnerHTML: string = '';
   currentIndex!: number;
   tagId: number = 0;
+  lastAtSignIndex!: number;
 
   private unlistener!: () => void;
+  private unlistener2!: () => void;
 
   @ViewChild('editableContent') editableContent!: ElementRef;
 
@@ -52,48 +54,80 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+
+  
+
+  
   
      this.unlistener = this.renderer.listen(this.editableContent.nativeElement, "input", event => {
+
+
+      console.log("listener event ", event);
+      
      
-      console.log("event: ", event);
-      console.log("event.target.innerHTML: ", event.target.innerHTML);
-      console.log("event.target.innerText: ", event.target.innerText);
-      console.log("this.editableContent.nativeElement: ", this.editableContent.nativeElement);
+      let currentInnerHTML = event.target.innerHTML;
+      currentInnerHTML = currentInnerHTML.replace(/<br>/g, '');
+      currentInnerHTML = currentInnerHTML.replace(/&nbsp;/g, ' ');
+      this.currentInnerHTML = currentInnerHTML;
+      
+
+      // if (navigator.userAgent.includes("Firefox") && event.target.innerHTML.endsWith("<br>")) {
+      //   // handle known firefox <br> bug, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1615852
+      //   this.currentInnerHTML = event.target.innerHTML.slice(0, -4);
+      // }
+
+      // this.currentInnerHTML = event.target.innerHTML.replace(/&nbsp;/g, ' ');
+
+      // this.currentInnerHTML = event.target.innerHTML;
+
+      console.log("listener this.currentInnerHTML", this.currentInnerHTML);
 
       if (event.inputType == "deleteContentBackward") {
-        console.log("DELETING!!!");
 
         const target = this.document.createTextNode("\u0001");
         this.document.getSelection()?.getRangeAt(0).insertNode(target);
+
+       
+
+
         this.currentIndex = event.target.innerHTML.indexOf("\u0001");
         target.parentNode?.removeChild(target);
 
-        console.log("DELETING!!! this.currentIndex: ", this.currentIndex);
+        console.log("weird event.target.innerHTML: ", event.target.innerHTML);
+
+        var numberOfUnicodes = (event.target.innerHTML.match(/\\u0001/g) || []).length;
+        var numberOfWhiteSpaces = (event.target.innerHTML.match(/&nbsp;/g) || []).length;
+
+        // console.log("numberOfBreakTags ", numberOfBreakTags);
+        console.log("numberOfWhiteSpaces ", numberOfWhiteSpaces);
+
+        const irrelavantCharactersToSubtract = (numberOfWhiteSpaces * 6) + (numberOfUnicodes * 6);
+
+        // if (currentInnerHTML.endsWith("<br>")) currentInnerHTML = currentInnerHTML.substring(0, currentInnerHTML.length - 4);
+        // if (event.target.innerHTML.endsWith("&nbsp;")) {
+        //   console.log("endsWithSpace");
+        // } else {
+        //   console.log("does not endsWithSpace");
+        // }
+        // this.currentIndex = currentIndex;
+        // this.currentIndex = currentIndex - irrelavantCharactersToSubtract;
+
+        console.log("delete this.lastAtSignIndex: ", this.lastAtSignIndex)
+        console.log("delete this.currentIndex: ", this.currentIndex)
+        console.log("delete this.currentIndex - irrelavantCharactersToSubtract: ", this.currentIndex - irrelavantCharactersToSubtract)
+        console.log("delete this.currentInnerHTML: ", this.currentInnerHTML)
+
         
+
+        if (this.lastAtSignIndex - 1 === (this.currentIndex - irrelavantCharactersToSubtract)) {
+          this.close();
+          return;
+        }
+
         this.handleDelete(event.target.innerHTML);
-
-      }
-
-      if (navigator.userAgent.includes("Firefox") && event.target.innerHTML.endsWith("<br>")) {
-        console.log("weeeeeeeeee3");
-        // handle known firefox <br> bug, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1615852
-        this.currentInnerHTML = event.target.innerHTML.slice(0, -4);
-      } else {
-        this.currentInnerHTML = event.target.innerHTML;
       }
       
 
-      
-
-      console.log("currentblah ", this.currentInnerHTML);
-
-      // if (navigator.userAgent.includes("Firefox")) {
-      //   currentInnerHTML = currentInnerHTML.replace(/&nbsp;/g, ' ');
-      // }
-
-      
-
-      // console.log("hail mary ", position);
 
       if (event.data === "@") {
         // console.log("yeppers");
@@ -107,6 +141,7 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
       const target = this.document.createTextNode("\u0001");
       this.document?.getSelection()?.getRangeAt(0).insertNode(target);
       this.currentIndex = event.target.innerHTML.indexOf("\u0001");
+      this.lastAtSignIndex = this.currentIndex - 1;
       target.parentNode?.removeChild(target);
 
         // let difference = patienceDiff( a.split(""), b.split("") );
@@ -123,6 +158,22 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
     });
 
+    // Disable default up and down arrow behavior if editableContent is open, 
+    // to allow up and down arrows to inform the tag selection
+    this.unlistener2 = this.renderer.listen(this.editableContent.nativeElement, "keydown", e => {
+     
+      if (this.showSubmitButton && 
+        e.key === 'ArrowUp' || 
+        e.key === 'ArrowDown' || 
+        e.key === "Enter" || 
+        e.key === "Escape") {
+        
+        return false;
+      }
+
+      return true;
+    });
+
   }
 
   handleDelete(innerHTML: string) {
@@ -130,14 +181,14 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
         let after = innerHTML.substring(this.currentIndex);
 
         if (after.startsWith("</span>")) {
-          console.log("starts with closing span");
+          
           let dataTagId = '';
 
           // data-tag-id=
           let goal = '';
 
           for (let len = before.length, i = len - 1; i > -1; i--) {
-            console.log("before ", before[i]);
+           
             goal = before[i] + goal;
 
             if (goal.startsWith("data-tag-id")) break;
@@ -159,33 +210,15 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
             }
 
             let hmm = hunch2[0];
-            // console.log("hunch1: ", hunch1);
-            console.log("dataTagId: ", dataTagId);
-            console.log("hunch2: ", hunch2);
-
+            
           }
 
-          console.log("goal: ", goal);
-         
-
-
+        
           let nodeToRemove = this.editableContent.nativeElement.querySelectorAll('[data-tag-id="' + dataTagId + '"]')[0];
 
-          console.log("nodeToRemove: ", nodeToRemove);
-
-          // const myNode = this.document.getElementById("editable-content");
-          
           this.editableContent.nativeElement.removeChild(nodeToRemove);
           
         }
-
-        console.log("before: ", before);
-        console.log("after: ", after);
-        
-
-        let another = this.editableContent.nativeElement.closest('span');
-        console.log("another: ", another);
-        // value.substring(0, index) + "," + value.substring(index);
   }
 
   
@@ -197,6 +230,7 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
   close() {
     console.log("CLOSING TIME");
     this.popupOpen = false;
+    this.lastAtSignIndex = -1;
     // this.commentDataService.close();
   }
 
@@ -224,10 +258,10 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
     // console.log("innerHtmlParts[0]: ", innerHtmlParts[0]);
     // \u0001
 
-    if (!thingy2) thingy2 = '\u0001';
+    // if (!thingy2) thingy2 = '\u0001';
 
     this.currentInnerHTML = thingy1 + 
-    '<span class="make-bold no-user-select" data-recipient-user-id="' + event.user.userID + '" data-tag-id="' + this.tagId +  '">' + '@' + event.user.name + '</span>' + thingy2;
+    '<span class="make-bold no-user-select" data-recipient-user-id="' + event.user.userID + '" data-tag-id="' + this.tagId +  '">' + '@' + event.user.firstName + " " + event.user.lastName + '</span>' + '\u0001' + thingy2;
 
     // this.currentInnerHTML = innerHtmlParts[0] + 
     // '<span class="make-bold" data-tag-id="' + this.tagId +  '" data-recipient-user-id="' + event.user.userID + '" data-comment-id="' + this.lastFakeCommentId + '">' + '@' + event.user.name + '</span>' + innerHtmlParts[1];
@@ -257,8 +291,8 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
    
 
     
-   const el = document.getElementById("editable-content");
-    const range = document.createRange();
+   const el = this.document.getElementById("editable-content");
+    const range = this.document.createRange();
     const sel = window.getSelection();
     // Works! but keeps old class
     if (el) {
@@ -371,9 +405,13 @@ export class CommentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
+
+  
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
     this.unlistener();
+    this.unlistener2();
   }
 
 

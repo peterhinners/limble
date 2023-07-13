@@ -1,85 +1,47 @@
-<p>Comments:</p>
+<div class="container">
+    <p style="color: #212427; font-family: sans-serif; font-weight: 600;">Comments:</p>
 
-<!-- <div class="comment-section">
-    <div *ngFor="let comment of comments">
-        <div class="box">{{comment.text}}<span class="push">{{comment.date}}</span></div>
-    </div>
-</div> -->
-
-
-
-
-<!-- <div class="row" *ngFor="let comment of comments">
-    <div class="div1">{{comment.text}}</div>
-    <div class="div2">System - {{comment.date | date: 'yyyy/MM/dd h:m a'}}</div>
-</div>
-
-
-<input *ngIf="!addCommentButton" type="text" id="text-input">
-
-<br>
-<br>
-<br>
-
-<button (click)="addComment()">{{addCommentButton ? "Add Comment" : "Submit Comment"}}</button>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br> -->
-
-<div class="row" *ngFor="let comment of comments">
-    <div class="div1" [innerHTML]="comment.text"></div>
-    <!-- <div class="div1">{{comment.text}}</div> -->
-    <div class="div2">{{comment.date | date: 'yyyy/MM/dd h:m a'}}</div>
-</div>
-
-<div class="row">
-    <div class="div1 input-with-button">
-        <!-- <input #commentInputRef [hidden]="addCommentButton" [(ngModel)]="newComment" class="comment-input" type="text" id="comment-input" (keypress)="doFilter($event)" (ngModelChange)="doChange($event)"> -->
-
-        <app-popup *ngIf="popupOpen" [users]="users" [currentInnerHTML]="currentInnerHTML" [currentIndex]="currentIndex" (onUserSelected)="selectUser($event)"></app-popup>
-
-        <div [ngClass]="{'disable-content-editable': !showSubmitButton}" #editableContent contenteditable id="editable-content"></div>
+    <div class="row" *ngFor="let comment of comments">
+        <div style="color: #212427; font-family: sans-serif;" class="left-elements" [innerHTML]="comment.text"></div>
+        <!-- <div class="left-elements">{{comment.text}}</div> -->
+        <div style="color: #212427; font-family: sans-serif;" class="right-elements">{{comment.date | date: 'yyyy/MM/dd h:m a'}}</div>
     </div>
 
-    <div [ngClass]="{'push': !showSubmitButton}"><button class="div2" (click)="toggleSubmitButton()">{{showSubmitButton ? "Submit Comment" : "Add Comment"}}</button></div>
-</div>
+    <div class="row special">
+        <div class="left-elements input-with-button">
+
+            <div class="wrapper">
+                <div style="margin-top: 2px; vertical-align: middle; color: #212427; font-family: sans-serif;" [ngClass]="{'disable-content-editable': !showSubmitButton}" #editableContent contenteditable id="editable-content"></div>
+
+                <app-popup style="vertical-align: middle; color: #212427; font-family: sans-serif;" id="tag-popup" *ngIf="popupOpen" [users]="users" [currentInnerHTML]="currentInnerHTML" [currentIndex]="currentIndex" (onUserSelected)="selectUser($event)" (closePopup)="close()"></app-popup>
+            </div>
 
 
 
-
-
-<!-- <input type="text" oninput="myFunction($event)"> -->
         
+            <!-- <div [ngClass]="{'disable-content-editable': !showSubmitButton}" #editableContent contenteditable id="editable-content">
 
+                <app-popup id="tag-popup" *ngIf="popupOpen" [users]="users" [currentInnerHTML]="currentInnerHTML" [currentIndex]="currentIndex" (onUserSelected)="selectUser($event)"></app-popup>
 
+            </div> -->
 
+            <!-- Original -->
+            <!-- <div [ngClass]="{'disable-content-editable': !showSubmitButton}" #editableContent contenteditable id="editable-content"></div>
 
-<!-- <ng-container *ngIf="popupOpen">
+            <app-popup id="tag-popup" *ngIf="popupOpen" [users]="users" [currentInnerHTML]="currentInnerHTML" [currentIndex]="currentIndex" (onUserSelected)="selectUser($event)"></app-popup> -->
 
-    <section class="popup" [class.open]="popupOpen"
-             (click)="close()">
-      <div class="inside-popup" (click)="$event.stopPropagation()">
-        <button class="close"
-                type="button" 
-                (click)="close()">X
-        </button>
-
-        <div class="row" *ngFor="let user of users">
-    
-            <div class="div1">{{user.name}}</div>
-          
         </div>
+
+        <div class="add-submit-button">
+            <button class="right-elements" (click)="toggleSubmitButton()">{{showSubmitButton ? "Submit Comment" : "Add Comment"}}</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
   
-
-      </div>
-    </section>
-  </ng-container> -->
-
-
-  
-
-<div>goodbye</div>

@@ -1,0 +1,129 @@
+.popup-wrapper {
+    padding: 0px;
+    background: rgb(248, 243, 243);
+    box-sizing: border-box;
+    // resize: horizontal;
+    border: 0.1px solid;
+    // overflow: auto;
+ 
+    overflow: scroll;
+  scrollbar-width: thick;
+  scrollbar-color: rgba(0, 0, 0, .5) rgba(0, 0, 0, 0);
+    width: 400px;
+    // max-width: 100%;
+    min-height: 50px;
+    max-height: 300px;
+    // padding: 20px;
+  
+      border-radius: 8px;
+  
+      box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.1);
+    // height: calc(100vh - 16px);
+  }
+
+  .tag-row::-webkit-scrollbar {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 10px;
+  }
+  
+  .tag-row::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    height: 80px;
+    background-color: rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+  }
+
+  .tag-row {
+
+    // display: flex;
+  justify-content: space-between;
+  align-items: center; 
+
+
+    display:flex;
+    width:100%;
+    padding: 0.5em 0em 0.5em 0.5em;
+    margin:0.2em 0em 0.2em 0.2em;
+    // overflow:hidden;
+    // background-color: rgba(0,0,0,0.125);
+    // border-bottom: 1px solid #808589;
+    margin-bottom:5px;
+  }
+  .tag-left-elements {
+    flex: 1 1 auto;/* dynamic width */
+  }
+  .tag-right-elements {
+    flex: 0 0 auto; /* fixed width */
+  }
+
+  .name{
+    padding-bottom: 5px;
+  }
+
+  .make-blue{
+    background-color: #1164A3;
+  }
+
+  .make-white{
+    color: white;
+  }
+
+  .make-dark{
+    color: #212427;
+  }
+  
+//   div {
+//     width: 100%;
+//     padding-bottom: 75%;
+//     background: white; /** <-- For the demo **/
+//   }
+
+
+
+.popup {
+    visibility: hidden;
+    opacity: 0;
+    min-height: 30px;
+    max-height: 300px !important;
+    // max-height: 300px;
+  
+    &.open {
+      visibility: inherit;
+      opacity: 1;
+      
+    }
+  
+    // display: block;
+  
+    // position: absolute;
+    // top: 0;
+    // left: 0;
+    // right: 0;
+    // bottom: 0;
+
+  
+    // background: rgba(0, 0, 0, 0.2);
+    transition: opacity 250ms ease-in;
+  
+    > .inside-popup {
+    //   position: absolute;
+    //   top: 50%;
+    //   left: 50%;
+    //   transform: translate(-50%, -50%);
+  
+    //   min-height: 30px;
+      max-height: 300px;
+      overflow: auto;
+      width: 300px;
+    //   width: auto;
+  
+      background: white;
+      // padding: 64px;
+  
+      border-radius: 8px;
+  
+      box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+  }

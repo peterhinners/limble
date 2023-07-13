@@ -1,4 +1,7 @@
 export interface User {
     userID: number;
-    name: string;
+    firstName: string;
+    lastName: string;
+    avatar: string;
+    status: string;
 }
